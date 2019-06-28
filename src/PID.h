@@ -31,6 +31,16 @@ class PID {
    */
   double TotalError();
 
+  /**
+   * Twiddle calculate the PID coefficients 
+   */
+  void Twiddle(double tol); 
+
+  /**
+   * The iteration steps
+   */
+  int step = 0;
+
  private:
   /**
    * PID Errors
@@ -50,6 +60,8 @@ class PID {
    * twiddle parameter
    */
   double dp[3];
+  double best_err;
+  double accum_err2;
 };
 
 #endif  // PID_H

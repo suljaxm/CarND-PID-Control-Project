@@ -64,12 +64,23 @@ int main() {
            * NOTE: Feel free to play around with the throttle and speed.
            *   Maybe use another PID controller to control the speed!
            */
-          pid.UpdateError(cte);
-          steer_value = pid.TotalError();
+          if(pid.step < 500){ //To optimize the PID coefficients
+            pid.step++;
+            pid.Twiddle(100);
+            pid.UpdateError(cte);
+            steer_value = pid.TotalError();
+          }
+          else{ //Use the optimized PID coefficients with Twiddle
+            pid.UpdateError(cte);
+            steer_value = pid.TotalError();
+          }
+
 
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value 
                     << std::endl;
+          
+          std::cout << "step:" << pid.step++ << std::endl;
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;

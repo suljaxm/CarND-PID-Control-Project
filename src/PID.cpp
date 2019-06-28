@@ -20,6 +20,11 @@ void PID::Init(double Kp_, double Ki_, double Kd_) {
     i_error = 0.0;
     prev_cte = 0.0; 
 
+    dp[0] = 1.0;
+    dp[1] = 1.0;
+    dp[2] = 1.0;
+    best_err = 0.0;
+    accum_err2 = 0.0;
 }
 
 void PID::UpdateError(double cte) {
@@ -31,6 +36,9 @@ void PID::UpdateError(double cte) {
     i_error += cte;
 
     prev_cte = cte;  // the last cte in diferential error.
+    
+    accum_err2 += cte*cte;
+    best_err = accum_err2/step;
 
 }
 
@@ -39,4 +47,8 @@ double PID::TotalError() {
    * TODO: Calculate and return the total error
    */
   return -Kp*p_error - Kd*d_error - Ki*i_error;  // TODO: Add your total error calc here!
+}
+
+void PID::Twiddle(double tol=0.2){
+    
 }
