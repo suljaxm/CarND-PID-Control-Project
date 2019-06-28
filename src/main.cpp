@@ -74,6 +74,10 @@ int main() {
             pid.UpdateError(cte);
             steer_value = pid.TotalError();
           }
+          
+         //limit the range of steering value
+         if(steer_value > 1)steer_value = 1;
+         if(steer_value < -1)steer_value = -1;
 
 
           // DEBUG
