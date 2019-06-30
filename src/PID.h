@@ -34,13 +34,19 @@ class PID {
   /**
    * Twiddle calculate the PID coefficients 
    */
-  void Twiddle(double tol); 
-
+  void Twiddle(double err, int pid_flag);
   /**
    * The iteration steps
    */
   int step = 0;
-
+  int p_step = 0;   //Choose one of [0,1]
+  double best_err;
+  double err;
+  /**
+   * PID Coefficients
+   */ 
+  double p[3]; //p[0]:Kp; p[1]:Kd; p[2]:Ki
+  double dp[3];
  private:
   /**
    * PID Errors
@@ -52,15 +58,14 @@ class PID {
   /**
    * PID Coefficients
    */ 
-  double Kp;
-  double Ki;
-  double Kd;
+//   double Kp;
+//   double Ki;
+//   double Kd;
 
   /**
    * twiddle parameter
    */
-  double dp[3];
-  double best_err;
+  
   double accum_err2;
 };
 

@@ -37,8 +37,8 @@ int main() {
   /**
    * TODO: Initialize the pid variable.
    */
-  pid.Init(0.15, 0.001, 4.001);
-
+  pid.Init(0.15, 0.001, 4.0);
+  
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -64,13 +64,41 @@ int main() {
            * NOTE: Feel free to play around with the throttle and speed.
            *   Maybe use another PID controller to control the speed!
            */
-          if(pid.step < 500){ //To optimize the PID coefficients
+          if(pid.step < 1){ //To optimize the PID coefficients
             pid.step++;
-            pid.Twiddle(100);
+            
             pid.UpdateError(cte);
             steer_value = pid.TotalError();
+            pid.best_err = pid.err;
+          }
+          else if(pid.step < -1){
+            pid.step++;
+            int pid_flag = int((pid.step%9)/3);     //Select a controller parameter from [0, 1, 2]
+            std::cout << "p_step_pre: " << pid.p_step << std::endl;
+            std::cout << "pid_flag: " << pid_flag << std::endl;
+            std::cout << "step:" << pid.step << " error:" << pid.err << " best_error:" << pid.best_err <<std::endl;
+            if(pid.p_step == 0){
+                pid.p[pid_flag] += pid.dp[pid_flag];
+                pid.UpdateError(cte);
+                steer_value = pid.TotalError();
+                if(pid.err < pid.best_err){
+                    pid.Twiddle(pid.err, pid_flag);
+                }
+                else{
+                    pid.p_step = 1;
+                }
+            }
+            else{
+                pid.p[pid_flag] -= 2*pid.dp[pid_flag];
+                pid.UpdateError(cte);
+                steer_value = pid.TotalError();
+                pid.Twiddle(pid.err, pid_flag);
+                pid.p_step = 0;
+            }
+            std::cout << "p_step: " << pid.p_step << std::endl;
           }
           else{ //Use the optimized PID coefficients with Twiddle
+            pid.step++;
             pid.UpdateError(cte);
             steer_value = pid.TotalError();
           }
@@ -81,10 +109,11 @@ int main() {
 
 
           // DEBUG
-          std::cout << "CTE: " << cte << " Steering Value: " << steer_value 
-                    << std::endl;
-          
-          std::cout << "step:" << pid.step++ << std::endl;
+          std::cout << std::endl;
+          std::cout << "step:" << pid.step << " error:" << pid.err << " best_error:" << pid.best_err <<std::endl;
+          std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
+          std::cout << "dp[0]:" << pid.dp[0] << " dp[1]:" << pid.dp[1] << " dp[2]:" << pid.dp[2] <<std::endl;
+          std::cout << "Kp:" << pid.p[0] << " Kd:" << pid.p[1] << " ki:" << pid.p[2] <<std::endl <<std::endl;
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
