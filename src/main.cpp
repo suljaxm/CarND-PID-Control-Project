@@ -37,7 +37,7 @@ int main() {
   /**
    * TODO: Initialize the pid variable.
    */
-  pid.Init(0.15, 0.001, 4.0);
+  pid.Init(0.25, 0.001, 6.01);
   
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
                      uWS::OpCode opCode) {
@@ -109,17 +109,20 @@ int main() {
 
 
           // DEBUG
-          std::cout << std::endl;
-          std::cout << "step:" << pid.step << " error:" << pid.err << " best_error:" << pid.best_err <<std::endl;
-          std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
-          std::cout << "dp[0]:" << pid.dp[0] << " dp[1]:" << pid.dp[1] << " dp[2]:" << pid.dp[2] <<std::endl;
-          std::cout << "Kp:" << pid.p[0] << " ki:" << pid.p[1] << " Kd:" << pid.p[2] <<std::endl <<std::endl;
+          if(pid.step%100 == 0){
+            std::cout << std::endl;
+            std::cout << "step:" << pid.step << " error:" << pid.err << " best_error:" << pid.best_err <<std::endl;
+            std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
+            std::cout << "dp[0]:" << pid.dp[0] << " dp[1]:" << pid.dp[1] << " dp[2]:" << pid.dp[2] <<std::endl;
+            std::cout << "Kp:" << pid.p[0] << " ki:" << pid.p[1] << " Kd:" << pid.p[2] <<std::endl <<std::endl;
+          }
+
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
           msgJson["throttle"] = 0.3;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-          std::cout << msg << std::endl;
+        //   std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }  // end "telemetry" if
       } else {
