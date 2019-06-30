@@ -55,12 +55,6 @@ class PID {
   double i_error;
   double d_error;
   double prev_cte;
-  /**
-   * PID Coefficients
-   */ 
-//   double Kp;
-//   double Ki;
-//   double Kd;
 
   /**
    * twiddle parameter

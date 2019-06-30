@@ -113,7 +113,7 @@ int main() {
           std::cout << "step:" << pid.step << " error:" << pid.err << " best_error:" << pid.best_err <<std::endl;
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
           std::cout << "dp[0]:" << pid.dp[0] << " dp[1]:" << pid.dp[1] << " dp[2]:" << pid.dp[2] <<std::endl;
-          std::cout << "Kp:" << pid.p[0] << " Kd:" << pid.p[1] << " ki:" << pid.p[2] <<std::endl <<std::endl;
+          std::cout << "Kp:" << pid.p[0] << " ki:" << pid.p[1] << " Kd:" << pid.p[2] <<std::endl <<std::endl;
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
